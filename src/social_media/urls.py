@@ -12,5 +12,6 @@ doc_urlpatterns = [
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/user/', include('social_media.auths.users.urls')),
     path('__debug__/', include("debug_toolbar.urls")),
 ]+doc_urlpatterns
