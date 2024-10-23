@@ -34,3 +34,34 @@ class UserTestCase(APITestCase):
         response = self.client.post(self.url, self.data_user, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(CustomUser.objects.count(), 1)
+
+
+class UserLoginApiViewTest(APITestCase):
+    def setUp(self):
+        self.url = reverse('login')
+        self.user = CustomUser.objects.create_user(email='test@example.com', password='testPassword123')
+        self.valid_data = {
+            'email':'test@example.com',
+            'password':'testPassword123'
+        }
+        self.invalid_data = {
+            'email':'test@example.com',
+            'password':'wrongPassword'
+        }
+
+    def test_login_user_success(self):
+        response = self.client.post(self.url, self.valid_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('access', response.data)
+        self.assertIn('refresh', response.data)
+
+    def test_login_user_invalid_credentials(self):
+        response = self.client.post(self.url, self.invalid_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertIn('error', response.data)
+
+    def test_login_user_missing_field(self):
+        incomplete_data = {'email': 'test@example.com'}
+        response = self.client.post(self.url, incomplete_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('password', response.data)
