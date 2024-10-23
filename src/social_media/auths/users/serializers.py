@@ -49,3 +49,9 @@ class OutputUserRegisterSerializer(serializers.ModelSerializer):
         }
 
 
+
+class UserLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=255, write_only=True, required=True)
+    password = serializers.CharField(max_length=255, write_only=True, required=True)
+
+
